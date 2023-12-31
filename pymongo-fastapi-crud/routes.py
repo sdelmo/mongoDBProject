@@ -45,7 +45,7 @@ def update_book(id: str, request: Request, book: BookUpdate = Body(...)):
                 status_code=status.HTTP_404_NOT_FOUND, detail=f"Book with ID {id} not found")
 
     if (
-        existing_book := reques.tapp.database["books"].find_one({"_id": id})
+        existing_book := request.tapp.database["books"].find_one({"_id": id})
     ) is not None:
         return existing_book
 
