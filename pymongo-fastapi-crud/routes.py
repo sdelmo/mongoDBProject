@@ -29,3 +29,25 @@ def find_book(id: str, request: Request):
         return book
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail=f"Book with ID {id} not found")
+
+
+@router.put("/{id}", response_description="Update a book", response_model=Book)
+def update_book(id: str, request: Request, book: BookUpdate = Body(...)):
+
+    book = {k: v for k, v in book.dict().items() if v is not None}
+
+    if len(book) >= 1:
+        update_result = request.app.database["books"].update_one({"_id": id}, {
+                                                                 "$set": book})
+
+        if update_result.modified_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Book with ID {id} not found")
+
+    if (
+        existing_book := reques.tapp.database["books"].find_one({"_id": id})
+    ) is not None:
+        return existing_book
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Book with ID {id} not found")
