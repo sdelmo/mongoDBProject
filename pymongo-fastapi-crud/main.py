@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from dotenv import dotenv_values
 from pymongo import MongoClient
 from contextlib import asynccontextmanager
+from routes import router as book_router
 
 config = dotenv_values(".env")
 
@@ -22,6 +23,8 @@ async def lifespan(app: FastAPI):
 USE_LIFESPAN = True
 
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(book_router, tags=["books"], prefix="/book")
 
 
 @app.get("/")
